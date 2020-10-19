@@ -9,9 +9,9 @@ import org.thymeleaf.context.Context;
 @AllArgsConstructor
 public class MailContentBuilder {
 
-  private final TemplateEngine templateEngine;
   private final String MAIL_CONTENT_MESSAGE = "message";
   private final String MAIL_TEMPLATE = "mailTemplate";
+  private final TemplateEngine templateEngine;
 
   public String build(String message) {
     Context context = new Context();
