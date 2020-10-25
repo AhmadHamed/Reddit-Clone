@@ -25,14 +25,14 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long userId;
 
-  @NotBlank(message = "Username name is required!")
+  @NotBlank(message = "Username is required!")
   private String userName;
 
-  @NotBlank(message = "Password name is required!")
+  @NotBlank(message = "Password is required!")
   private String password;
 
   @Email
-  @NotEmpty(message = "Password name is required!")
+  @NotEmpty(message = "email is required!")
   private String email;
 
   private Instant creationDate;
