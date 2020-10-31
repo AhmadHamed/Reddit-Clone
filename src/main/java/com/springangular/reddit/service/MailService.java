@@ -8,6 +8,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import static com.springangular.reddit.service.IMailContent.MAIL_SENDER;
@@ -20,7 +21,8 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final MailContentBuilder mailContentBuilder;
 
-    public void initiateMailActivationProcess(NotificationEmail notificationEmail)
+    @Async
+    public void initiateMailBuildingProcess(NotificationEmail notificationEmail)
             throws RedditMailException {
         MimeMessagePreparator messagePreparator =
                 (mimeMessage) -> {
@@ -34,15 +36,14 @@ public class MailService {
             sendMail(messagePreparator);
         } catch (MailException e) {
             throw new RedditMailException(
-                    "An error occurred during sending the activation mail to "
-                            + notificationEmail.getRecipient());
+                    "An error occurred during sending the e-mail to " + notificationEmail.getRecipient());
         }
     }
 
     private void sendMail(MimeMessagePreparator messagePreparator) {
         javaMailSender.send(messagePreparator);
 
-        log.info("Activation mail was sent");
+        log.info("An E-mail was sent");
         log.info("Kindly check your inbox!");
     }
 }

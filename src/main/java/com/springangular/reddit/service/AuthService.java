@@ -15,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
-import static com.springangular.reddit.service.IMailContent.MAIL_BODY;
-import static com.springangular.reddit.service.IMailContent.MAIL_SUBJECT;
+import static com.springangular.reddit.service.IMailContent.*;
 import static java.util.Objects.isNull;
 
 @Service
@@ -34,8 +33,7 @@ public class AuthService {
 
     String token = generateVerificationToken(user);
 
-    mailService.initiateMailActivationProcess(
-            new NotificationEmail(MAIL_SUBJECT, user.getEmail(), MAIL_BODY + token));
+    sendAnEmail(ACTIVATION_ATTEMPT_MAIL_SUBJECT, ACTIVATION_ATTEMPT_MAIL_BODY + token, user);
   }
 
   private User setUserData(RegisterRequest registerRequest) {
@@ -65,24 +63,32 @@ public class AuthService {
     VerificationToken verificationToken = verificationTokenRep.findOneByToken(userToken);
 
     if (isNull(verificationToken)) {
-      throw new SpringRedditException("Invalid Token!");
+      throw new SpringRedditException("Invalid/Expired Token!");
     } else {
       getUserAndActivateAccount(verificationToken);
     }
   }
 
-  private void getUserAndActivateAccount(VerificationToken verificationToken) {
+  @Transactional
+  void getUserAndActivateAccount(VerificationToken verificationToken) {
     String userName = verificationToken.getUser().getUserName();
     User user = userRep.findByUserName(userName);
     if (isNull(user)) {
       throw new SpringRedditException("Username not found!");
     } else {
       updateUserState(user);
+      verificationTokenRep.delete(verificationToken);
+      sendAnEmail(ACTIVATION_SUCCESS_MAIL_SUBJECT, ACTIVATION_SUCCESS_MAIL_BODY, user);
     }
   }
 
   private void updateUserState(User user) {
     user.setEnabled(true);
     userRep.save(user);
+  }
+
+  private void sendAnEmail(String mailSubject, String mailBody, User user) {
+    mailService.initiateMailBuildingProcess(
+            new NotificationEmail(mailSubject, user.getEmail(), mailBody));
   }
 }
