@@ -1,6 +1,7 @@
 package com.springangular.reddit.service;
 
 import com.springangular.reddit.dto.RegisterRequest;
+import com.springangular.reddit.exceptions.SpringRedditException;
 import com.springangular.reddit.models.User;
 import com.springangular.reddit.models.VerificationToken;
 import com.springangular.reddit.repositories.UserRep;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 import static com.springangular.reddit.service.IMailContent.MAIL_BODY;
 import static com.springangular.reddit.service.IMailContent.MAIL_SUBJECT;
+import static java.util.Objects.isNull;
 
 @Service
 @AllArgsConstructor
@@ -57,5 +59,30 @@ public class AuthService {
     verificationTokenRep.save(verificationToken);
 
     return token;
+  }
+
+  public void activateAccount(String userToken) {
+    VerificationToken verificationToken = verificationTokenRep.findOneByToken(userToken);
+
+    if (isNull(verificationToken)) {
+      throw new SpringRedditException("Invalid Token!");
+    } else {
+      getUserAndActivateAccount(verificationToken);
+    }
+  }
+
+  private void getUserAndActivateAccount(VerificationToken verificationToken) {
+    String userName = verificationToken.getUser().getUserName();
+    User user = userRep.findByUserName(userName);
+    if (isNull(user)) {
+      throw new SpringRedditException("Username not found!");
+    } else {
+      updateUserState(user);
+    }
+  }
+
+  private void updateUserState(User user) {
+    user.setEnabled(true);
+    userRep.save(user);
   }
 }
