@@ -20,7 +20,7 @@ import static java.util.Objects.isNull;
 
 @Service
 @AllArgsConstructor
-public class AuthService {
+public class RegistrationService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRep userRep;
@@ -70,7 +70,7 @@ public class AuthService {
   }
 
   @Transactional
-  void getUserAndActivateAccount(VerificationToken verificationToken) {
+  protected void getUserAndActivateAccount(VerificationToken verificationToken) {
     String userName = verificationToken.getUser().getUserName();
     User user = userRep.findByUserName(userName);
     if (isNull(user)) {
