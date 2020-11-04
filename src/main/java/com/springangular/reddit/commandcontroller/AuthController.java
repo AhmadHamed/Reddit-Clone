@@ -1,5 +1,6 @@
 package com.springangular.reddit.commandcontroller;
 
+import com.springangular.reddit.dto.AuthenticationResponse;
 import com.springangular.reddit.dto.LoginRequest;
 import com.springangular.reddit.dto.RegisterRequest;
 import com.springangular.reddit.service.LoginService;
@@ -32,7 +33,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public void login(@RequestBody LoginRequest loginRequest) {
-    loginService.login(loginRequest);
+  public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+    return loginService.login(loginRequest);
   }
 }

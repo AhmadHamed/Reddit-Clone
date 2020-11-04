@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,27 +19,28 @@ import static java.util.Objects.isNull;
 @Service
 @AllArgsConstructor
 public class RedditUserDetailsService implements UserDetailsService {
-    private final String USER = "USER";
-    private final UserRep userRep;
+  private final String USER = "USER";
+  private final UserRep userRep;
 
-    @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userRep.findByUserName(userName);
-        if (isNull(user)) {
-            throw new UsernameNotFoundException(userName + " was not found!");
-        } else {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getUserName(),
-                    user.getPassword(),
-                    user.isEnabled(),
-                    true,
-                    true,
-                    true,
-                    getAuthorities(USER));
-        }
+  @Override
+  @Transactional
+  public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+    User user = userRep.findByUserName(userName);
+    if (isNull(user)) {
+      throw new UsernameNotFoundException(userName + " was not found!");
+    } else {
+      return new org.springframework.security.core.userdetails.User(
+              user.getUserName(),
+              user.getPassword(),
+              user.isEnabled(),
+              true,
+              true,
+              true,
+              getAuthorities(USER));
     }
+  }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(String role) {
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
-    }
+  private Collection<? extends GrantedAuthority> getAuthorities(String role) {
+    return Collections.singletonList(new SimpleGrantedAuthority(role));
+  }
 }
