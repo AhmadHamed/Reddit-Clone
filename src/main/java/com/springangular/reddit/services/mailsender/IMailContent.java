@@ -1,4 +1,4 @@
-package com.springangular.reddit.service;
+package com.springangular.reddit.services.mailsender;
 
 public interface IMailContent {
   String ACTIVATION_ATTEMPT_MAIL_SUBJECT = "Reddit Account Activation";

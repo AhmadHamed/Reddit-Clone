@@ -1,4 +1,4 @@
-package com.springangular.reddit.service;
+package com.springangular.reddit.services.authentication;
 
 import com.springangular.reddit.dto.AuthenticationResponse;
 import com.springangular.reddit.dto.LoginRequest;
@@ -23,7 +23,7 @@ public class LoginService {
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(), loginRequest.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    String token = jwtProvider.generateToke(authentication);
+      String token = jwtProvider.generateJwt(authentication);
     return new AuthenticationResponse(loginRequest.getUsername(), token);
   }
 }

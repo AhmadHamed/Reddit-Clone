@@ -1,4 +1,4 @@
-package com.springangular.reddit.service;
+package com.springangular.reddit.services;
 
 import com.springangular.reddit.models.User;
 import com.springangular.reddit.repositories.UserRep;

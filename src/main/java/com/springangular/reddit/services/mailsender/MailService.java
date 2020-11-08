@@ -1,4 +1,4 @@
-package com.springangular.reddit.service;
+package com.springangular.reddit.services.mailsender;
 
 import com.springangular.reddit.exceptions.RedditMailException;
 import com.springangular.reddit.systemobjects.NotificationEmail;
@@ -11,7 +11,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import static com.springangular.reddit.service.IMailContent.MAIL_SENDER;
+import static com.springangular.reddit.services.mailsender.IMailContent.MAIL_SENDER;
 
 @Service
 @AllArgsConstructor

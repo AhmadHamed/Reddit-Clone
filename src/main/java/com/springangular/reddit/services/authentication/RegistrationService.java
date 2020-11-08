@@ -1,4 +1,4 @@
-package com.springangular.reddit.service;
+package com.springangular.reddit.services.authentication;
 
 import com.springangular.reddit.dto.RegisterRequest;
 import com.springangular.reddit.exceptions.SpringRedditException;
@@ -6,6 +6,7 @@ import com.springangular.reddit.models.User;
 import com.springangular.reddit.models.VerificationToken;
 import com.springangular.reddit.repositories.UserRep;
 import com.springangular.reddit.repositories.VerificationTokenRep;
+import com.springangular.reddit.services.mailsender.MailService;
 import com.springangular.reddit.systemobjects.NotificationEmail;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
-import static com.springangular.reddit.service.IMailContent.*;
+import static com.springangular.reddit.services.mailsender.IMailContent.*;
 import static java.util.Objects.isNull;
 
 @Service

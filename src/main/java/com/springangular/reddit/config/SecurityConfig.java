@@ -1,9 +1,13 @@
 package com.springangular.reddit.config;
 
+import com.springangular.reddit.security.JwtAuthenticationFilter;
+import com.springangular.reddit.security.JwtProvider;
+import com.springangular.reddit.services.RedditUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.security.KeyStore;
 
@@ -21,10 +26,22 @@ import java.security.KeyStore;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final UserDetailsService userDetailsService;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Override
   public void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.csrf().disable().authorizeRequests().antMatchers("api/auth/**").permitAll();
+    httpSecurity
+            .csrf()
+            .disable()
+            .authorizeRequests()
+            .antMatchers("api/auth/**")
+            .permitAll()
+            .antMatchers(HttpMethod.GET, "api/subreddit/**")
+            .permitAll()
+            .anyRequest()
+            .authenticated();
+    httpSecurity.addFilterBefore(
+            jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   @Bean
@@ -52,5 +69,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     keyStore.load(
             new ClassPathResource("/javakeystore.jks").getInputStream(), "secret".toCharArray());
     return keyStore;
+  }
+
+  @Bean
+  public JwtAuthenticationFilter createJwtAuthenticationFilterBean(
+          JwtProvider jwtProvider, RedditUserDetailsService userDetailsService) {
+    JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter();
+    jwtAuthenticationFilter.setJwtProvider(jwtProvider);
+    jwtAuthenticationFilter.setUserDetailsService(userDetailsService);
+    return jwtAuthenticationFilter;
   }
 }

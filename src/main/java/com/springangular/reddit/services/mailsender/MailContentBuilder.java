@@ -1,4 +1,4 @@
-package com.springangular.reddit.service;
+package com.springangular.reddit.services.mailsender;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
