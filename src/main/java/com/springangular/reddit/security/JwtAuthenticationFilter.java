@@ -16,8 +16,6 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-  private final String AUTHENTICATION = "Authentication";
-  private final String BEARER = "Bearer";
   private JwtProvider jwtProvider;
   private RedditUserDetailsService userDetailsService;
 
@@ -42,6 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private String getJwtFromRequest(HttpServletRequest request) {
+    String AUTHENTICATION = "Authentication";
+    String BEARER = "Bearer";
     String bearerToken = request.getHeader(AUTHENTICATION);
     if (!bearerToken.isEmpty() && bearerToken.startsWith(BEARER)) {
       bearerToken = bearerToken.substring(7);
